@@ -1,0 +1,7 @@
+processed 48233 tokens with 5389 phrases; found: 5362 phrases; correct: 4692.
+accuracy:  93.86%; precision:  87.50%; recall:  87.07%; FB1:  87.28
+             body: precision:  82.09%; recall:  82.63%; FB1:  82.36  1982
+             chec: precision:  91.46%; recall:  90.13%; FB1:  90.79  1697
+             cure: precision:  60.93%; recall:  54.76%; FB1:  57.68  151
+             dise: precision:  64.63%; recall:  67.86%; FB1:  66.20  147
+             symp: precision:  95.74%; recall:  95.40%; FB1:  95.57  1385

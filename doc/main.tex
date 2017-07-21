@@ -1,0 +1,131 @@
+
+\documentclass{llncs}
+\usepackage{CJK}
+\usepackage{algorithm}  
+\usepackage{algorithmicx}  
+\usepackage{algpseudocode}  
+\usepackage{amsmath}  
+\usepackage{multirow}
+\begin{document}
+	
+
+\title{Algorithm Description}
+%
+\titlerunning{Hamiltonian Mechanics}  % abbreviated title (for running head)
+%                                     also used for the TOC unless
+%                                     \toctitle is used
+%
+\author{}
+
+%
+\institute{HIT WI}
+
+\maketitle              % typeset the title of the contribution
+
+\begin{abstract}
+For this ccks named entity recognition task, we mainly use two methods.The single CRF and the LSTM-CRF neural network model.We use the gold label data 
+set to do the unsupervised learning for both model,and the unlabel data set to do the embedding and supervised learning.Finally get the  \dots
+\keywords{Name entity recognition,CRF,LSTM}
+\end{abstract}
+%
+\section{LSTM-CRF method}
+\subsection{Neural Network Architecture}
+In this section, we describe the components (layers) of our neural network architecture. We introduce the neural layers in our neural network one
+by-one from bottom to top.
+\subsubsection{Char Embedding}
+We use the char level vector to represent the Chinese words,by using the word2vec in the unlabeled dataset,the embedding dimension is 100.
+\subsubsection{Bi-directional-LSTM}
+For many sequence labeling tasks it is beneficial to have access to both past (left) and future (right) contexts.The solution whose effectiveness has been proven by previous work (Dyer et al., 2015) is bi-directional LSTM
+(BLSTM). The basic idea is to present each sequence forwards and backwards to two separate hidden states to capture past and future information, respectively. Then the two hidden states are concatenated to form the final output.
+\subsubsection{CRF}
+For sequence labeling (or general structured prediction) tasks, it is beneficial to consider the correlations between labels in neighborhoods and jointly decode the best chain of labels for a given input sentence.Therefore, we model
+label sequence jointly using a conditional random field (CRF) (Lafferty et al., 2001), instead of decoding each label independently.
+In our code,we try to use the negative log likelihood function and the
+labelwise function to get the loss of the CRF layer.Using the marginal decode
+and viterbi decode.
+ 
+\floatname{algorithm}{Algorithm}  
+\renewcommand{\algorithmicrequire}{\textbf{input:}}  
+\renewcommand{\algorithmicensure}{\textbf{output:}}  
+	\begin{algorithm}  
+		\caption{CRF loss Negative log likelihood}  
+		\begin{algorithmic}[1]  
+			\Require feature from BiLSTM,Tags  
+			\Ensure Loss  
+			\Function {Likelihood loss}{$feature,self,tags$}  
+			\State $forward score \gets CRFlayer.forward(feature)$
+			\State \# Do the forward algorithm to compute the partition function
+			\State $gold score \gets CRFlayer.score_sentence(feature,tags)$
+			\State \# Gives the score of a provided tag sequence
+			\State \Return{$forward score - gold score$}  
+			\EndFunction 
+		\end{algorithmic}  
+	\end{algorithm} 
+
+ 
+\subsubsection{BLSTM-CRF}
+\
+The basic train step is as fellow:
+\begin{algorithm}  
+	\caption{Network train step}  
+	\begin{algorithmic}[1]  
+		\Require Sequences of context C,Sequences of BIEO tags T 
+		\Ensure Model   
+		\State Initialize the word-embedding layer$\gets$ Separating text by char and do Word2vec
+		\State model$\gets$LstmCrfModel.BiLSTM CRF(Model parameters)
+		\State optimizer $\gets$ optim.SGD(model.parameters(), lr$\gets$0.01, weight decay$\gets$1e-4)
+		\For {in range(epcho)}
+		 \ForAll {$sentence \in context$}
+		 \State model.LSTMtrain(sentence)
+		 \State Input to the CRFlayer
+		 \EndFor
+		 \State Get loss(T,predict tags)
+		 \State SGD Optimize the loss
+		 \EndFor
+		\State \Return{$Model$}  
+	\end{algorithmic}  
+\end{algorithm} 
+\section{Parameter Initialization}
+The Parameter Initialization is as fellow:
+\begin{table}[!hbp]
+	\begin{tabular}{|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}
+		\hline
+		 Optimizer & Embedding & Dropout & Learning rate& Weight dercay&CRF loss \\
+		\hline
+		 SGD & Word2Vec & 0.5 & 0.01 & 1e-4 &lablewise\\
+		\hline
+	\end{tabular}
+\end{table} 
+
+\section{Single CRF method}
+\subsection{feature chose}
+Chose the pos tag to be the extra feature,to do the crf in char level.
+\subsection{Parameter Initialization}
+The Parameter Initialization is as fellow:
+\begin{table}[!hbp]
+	\begin{tabular}{|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}
+		\hline
+		Optimizer & Embedding & Dropout & Learning rate& Weight dercay&CRF loss \\
+		\hline
+		SGD & Word2Vec & 0.5 & 0.01 & 1e-4 &lablewise\\
+		\hline
+	\end{tabular}
+\end{table} 
+
+
+
+%
+% ---- Bibliography ----
+%
+\begin{thebibliography}{5}
+%
+\bibitem {clar:eke}
+Schölkopf B, Platt J, Hofmann T. Training Conditional Random Fields for Maximum Labelwise Accuracy[C]// Advances in Neural Information Processing Systems 19, Proceedings of the Twentieth Conference on Neural Information Processing Systems, Vancouver, British Columbia, Canada, December. DBLP, 2006:529-536.
+
+\bibitem {clar:eke:2}
+Ma X, Hovy E. End-to-end Sequence Labeling via Bi-directional LSTM-CNNs-CRF[J]. 2016.
+\bibitem {clar:eke:3}
+Goldberg Y, Levy O. word2vec Explained: deriving Mikolov et al.'s negative-sampling word-embedding method[J]. Eprint Arxiv, 2014.
+
+\end{thebibliography}
+\end{document}

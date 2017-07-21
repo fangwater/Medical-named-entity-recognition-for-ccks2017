@@ -1,0 +1,15 @@
+{
+    "clip": 5.0, 
+    "decode_method": "viterbi", 
+    "dev": "data/test.txt", 
+    "embedding_dim": 100, 
+    "freeze": false, 
+    "hidden_dim": 200, 
+    "load": "model", 
+    "loss_function": "likelihood", 
+    "pre_emb": "embedding/emb.txt", 
+    "save": "model", 
+    "train": "data/train.txt", 
+    "vocab_size": 8000, 
+    "zeros": 1
+}
